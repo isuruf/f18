@@ -395,6 +395,20 @@ private:
     }
   }
 
+  // Step expressions can't be zero (Section 11.1.7.4.1, paragraph 1).
+  // Make this a warning since it's not a constraint violation
+  void CheckZeroStep(const parser::ScalarExpr &stepExpression) {
+    MaybeExpr stepExpr{evaluate::Fold(
+        context_.foldingContext(), AnalyzeExpr(context_, stepExpression))};
+    if (stepExpr) {
+      std::optional<std::int64_t> stepValue{evaluate::ToInt64(*stepExpr)};
+      if (stepValue && stepValue.value() == 0) {
+        context_.Say(stepExpression.thing.value().source,
+            "DO step expression should not be zero"_en_US);
+      }
+    }
+  }
+
   void CheckDoNormal(const parser::DoConstruct &doConstruct) {
     // C1120 -- types of DO variables must be INTEGER, extended by allowing
     // REAL and DOUBLE PRECISION
@@ -404,6 +418,7 @@ private:
     CheckDoExpression(bounds.upper);
     if (bounds.step) {
       CheckDoExpression(bounds.step.value());
+      CheckZeroStep(bounds.step.value());
     }
   }
 

@@ -14,6 +14,9 @@
 
 ! C1121 -- any procedure referenced in a concurrent header must be pure
 
+! Also, check that the step expressions are not zero.  This is prohibited by
+! Section 11.1.7.4.1, paragraph 1.
+
 SUBROUTINE do_concurrent_c1121(i,n)
   IMPLICIT NONE
   INTEGER :: i, n, flag
@@ -28,3 +31,13 @@ SUBROUTINE do_concurrent_c1121(i,n)
       i = 35
     END FUNCTION random
 END SUBROUTINE do_concurrent_c1121
+
+SUBROUTINE s1()
+  ! Warn since no constrains are violated 
+  DO 20 I = 1, 10, 0
+  20 CONTINUE
+
+  ! Warn since no constrains are violated 
+  DO 40 I = 1, 10, 5 - 5
+  40 CONTINUE
+end subroutine s1
