@@ -24,6 +24,9 @@ module iso_fortran_env
   integer, parameter :: atomic_int_kind = selected_int_kind(18)
   integer, parameter :: atomic_logical_kind = atomic_int_kind
 
+  ! TODO: Use PACK([x],test) in place of the array constructor idiom
+  ! [(x, integer::j=1,COUNT([test]))] below once PACK() can be folded.
+
   integer, parameter, private :: &
     selectedASCII = selected_char_kind('ASCII'), &
     selectedUCS_2 = selected_char_kind('UCS-2'), &
