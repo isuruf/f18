@@ -364,7 +364,6 @@ Expr<T> Reshape(FoldingContext &context, FunctionRef<T> &&funcRef) {
   std::optional<std::vector<ConstantSubscript>> shape{
       GetIntegerVector<ConstantSubscript>(args[1])};
   std::optional<std::vector<int>> order{GetIntegerVector<int>(args[3])};
-
   if (!source || !shape || (args[2] && !pad) || (args[3] && !order)) {
     return Expr<T>{std::move(funcRef)};  // Non-constant arguments
   } else if (!IsValidShape(shape.value())) {
@@ -563,6 +562,17 @@ Expr<T> FoldOperation(FoldingContext &context, FunctionRef<T> &&funcRef) {
     }
   }
   return Expr<T>{std::move(funcRef)};
+}
+
+template<typename T>
+Expr<T> FoldMerge(FoldingContext &context, FunctionRef<T> &&funcRef) {
+  return FoldElementalIntrinsic<T, T, T, LogicalResult>(context,
+      std::move(funcRef),
+      ScalarFunc<T, T, T, LogicalResult>(
+          [](const Scalar<T> &ifTrue, const Scalar<T> &ifFalse,
+              const Scalar<LogicalResult> &predicate) -> Scalar<T> {
+            return predicate.IsTrue() ? ifTrue : ifFalse;
+          }));
 }
 
 template<int KIND>
@@ -780,6 +790,8 @@ Expr<Type<TypeCategory::Integer, KIND>> FoldIntrinsicFunction(
           },
           sx->u);
     }
+  } else if (name == "merge") {
+    return FoldMerge<T>(context, std::move(funcRef));
   } else if (name == "merge_bits") {
     return FoldElementalIntrinsic<T, T, T, T>(
         context, std::move(funcRef), &Scalar<T>::MERGE_BITS);
@@ -900,7 +912,7 @@ Expr<Type<TypeCategory::Integer, KIND>> FoldIntrinsicFunction(
   // TODO:
   // ceiling, count, cshift, dot_product, eoshift,
   // findloc, floor, iall, iany, iparity, ibits, image_status, index, ishftc,
-  // len_trim, matmul, max, maxloc, maxval, merge, min,
+  // len_trim, matmul, max, maxloc, maxval, min,
   // minloc, minval, mod, modulo, nint, not, pack, product, reduce,
   // scan, sign, spread, sum, transfer, transpose, unpack, verify
   return Expr<T>{std::move(funcRef)};
@@ -1037,6 +1049,8 @@ Expr<Type<TypeCategory::Real, KIND>> FoldIntrinsicFunction(
     return Expr<T>{Scalar<T>::HUGE()};
   } else if (name == "max") {
     return FoldMINorMAX(context, std::move(funcRef), Ordering::Greater);
+  } else if (name == "merge") {
+    return FoldMerge<T>(context, std::move(funcRef));
   } else if (name == "min") {
     return FoldMINorMAX(context, std::move(funcRef), Ordering::Less);
   } else if (name == "real") {
@@ -1050,7 +1064,7 @@ Expr<Type<TypeCategory::Real, KIND>> FoldIntrinsicFunction(
     return Expr<T>{Scalar<T>::TINY()};
   }
   // TODO: anint, cshift, dim, dot_product, eoshift, fraction, matmul,
-  // max, maxval, merge, min, minval, modulo, nearest, norm2, pack, product,
+  // maxval, minval, modulo, nearest, norm2, pack, product,
   // reduce, rrspacing, scale, set_exponent, spacing, spread,
   // sum, transfer, transpose, unpack, bessel_jn (transformational) and
   // bessel_yn (transformational)
@@ -1100,8 +1114,10 @@ Expr<Type<TypeCategory::Complex, KIND>> FoldIntrinsicFunction(
     return Fold(context,
         Expr<T>{ComplexConstructor<KIND>{ToReal<KIND>(context, std::move(re)),
             ToReal<KIND>(context, std::move(im))}});
+  } else if (name == "merge") {
+    return FoldMerge<T>(context, std::move(funcRef));
   }
-  // TODO: cshift, dot_product, eoshift, matmul, merge, pack, product,
+  // TODO: cshift, dot_product, eoshift, matmul, pack, product,
   // reduce, spread, sum, transfer, transpose, unpack
   return Expr<T>{std::move(funcRef)};
 }
@@ -1172,9 +1188,11 @@ Expr<Type<TypeCategory::Logical, KIND>> FoldIntrinsicFunction(
             [&fptr](const Scalar<LargestInt> &i, const Scalar<LargestInt> &j) {
               return Scalar<T>{std::invoke(fptr, i, j)};
             }));
+  } else if (name == "merge") {
+    return FoldMerge<T>(context, std::move(funcRef));
   }
   // TODO: btest, cshift, dot_product, eoshift, is_iostat_end,
-  // is_iostat_eor, lge, lgt, lle, llt, logical, matmul, merge, out_of_range,
+  // is_iostat_eor, lge, lgt, lle, llt, logical, matmul, out_of_range,
   // pack, parity, reduce, spread, transfer, transpose, unpack
   return Expr<T>{std::move(funcRef)};
 }
@@ -1201,12 +1219,14 @@ Expr<Type<TypeCategory::Character, KIND>> FoldIntrinsicFunction(
         context, std::move(funcRef), CharacterUtils<KIND>::ADJUSTR);
   } else if (name == "max") {
     return FoldMINorMAX(context, std::move(funcRef), Ordering::Greater);
+  } else if (name == "merge") {
+    return FoldMerge<T>(context, std::move(funcRef));
   } else if (name == "min") {
     return FoldMINorMAX(context, std::move(funcRef), Ordering::Less);
   } else if (name == "new_line") {
     return Expr<T>{Constant<T>{CharacterUtils<KIND>::NEW_LINE()}};
   }
-  // TODO: cshift, eoshift, max, maxval, merge, min, minval, pack, reduce,
+  // TODO: cshift, eoshift, maxval, minval, pack, reduce,
   // repeat, spread, transfer, transpose, trim, unpack
   return Expr<T>{std::move(funcRef)};
 }
