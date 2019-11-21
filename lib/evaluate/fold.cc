@@ -597,6 +597,18 @@ Expr<Type<TypeCategory::Integer, KIND>> FoldIntrinsicFunction(
         }));
   } else if (name == "bit_size") {
     return Expr<T>{Scalar<T>::bits};
+  } else if (name == "count") {
+    if (!args[1]) {  // TODO: COUNT(x,DIM=d)
+      if (const auto *constant{UnwrapConstantValue<LogicalResult>(args[0])}) {
+        std::int64_t result{0};
+        for (const auto &element : constant->values()) {
+          if (element.IsTrue()) {
+            ++result;
+          }
+        }
+        return Expr<T>{result};
+      }
+    }
   } else if (name == "digits") {
     if (const auto *cx{UnwrapExpr<Expr<SomeInteger>>(args[0])}) {
       return Expr<T>{std::visit(
@@ -910,9 +922,9 @@ Expr<Type<TypeCategory::Integer, KIND>> FoldIntrinsicFunction(
     return UBOUND(context, std::move(funcRef));
   }
   // TODO:
-  // ceiling, count, cshift, dot_product, eoshift,
+  // ceiling, cshift, dot_product, eoshift,
   // findloc, floor, iall, iany, iparity, ibits, image_status, index, ishftc,
-  // len_trim, matmul, max, maxloc, maxval, min,
+  // len_trim, matmul, maxloc, maxval,
   // minloc, minval, mod, modulo, nint, not, pack, product, reduce,
   // scan, sign, spread, sum, transfer, transpose, unpack, verify
   return Expr<T>{std::move(funcRef)};

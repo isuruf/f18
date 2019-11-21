@@ -29,9 +29,9 @@ module iso_fortran_env
     selectedUCS_2 = selected_char_kind('UCS-2'), &
     selectedUnicode = selected_char_kind('ISO_10646')
   integer, parameter :: character_kinds(*) = [ &
-    [(selectedASCII, integer :: j=1, merge(1,0,selectedASCII >= 0))], &
-    [(selectedUCS_2, integer :: j=1, merge(1,0,selectedUCS_2 >= 0))], &
-    [(selectedUnicode, integer :: j=1, merge(1,0,selectedUnicode >= 0))]]
+    [(selectedASCII, integer :: j=1, count([selectedASCII >= 0]))], &
+    [(selectedUCS_2, integer :: j=1, count([selectedUCS_2 >= 0]))], &
+    [(selectedUnicode, integer :: j=1, count([selectedUnicode >= 0]))]]
 
   integer, parameter, private :: &
     selectedInt8 = selected_int_kind(2), &
@@ -61,19 +61,19 @@ module iso_fortran_env
     int128 = merge(selectedInt128, merge(-2, -1, selectedInt128 >= 0), &
                    digits(int(0,kind=safeInt128)) == 127)
   integer, parameter :: integer_kinds(*) = [ &
-    [(int8, integer :: j=1, merge(1, 0, int8==selectedInt8))], &
-    [(int16, integer :: j=1, merge(1, 0, int16==selectedInt16))], &
-    [(int32, integer :: j=1, merge(1, 0, int32==selectedInt32))], &
-    [(int64, integer :: j=1, merge(1, 0, int64==selectedInt64))], &
-    [(int128, integer :: j=1, merge(1, 0, int128==selectedInt128))]]
+    [(int8, integer :: j=1, count([int8==selectedInt8]))], &
+    [(int16, integer :: j=1, count([int16==selectedInt16]))], &
+    [(int32, integer :: j=1, count([int32==selectedInt32]))], &
+    [(int64, integer :: j=1, count([int64==selectedInt64]))], &
+    [(int128, integer :: j=1, count([int128==selectedInt128]))]]
 
   integer, parameter :: &
     logical8 = int8, logical16 = int16, logical32 = int32, logical64 = int64
   integer, parameter :: logical_kinds(*) = [ &
-    [(logical8, integer :: j=1, merge(1, 0, logical8 >= 0))], &
-    [(logical16, integer :: j=1, merge(1, 0, logical16 >= 0))], &
-    [(logical32, integer :: j=1, merge(1, 0, logical32 >= 0))], &
-    [(logical64, integer :: j=1, merge(1, 0, logical64 >= 0))]]
+    [(logical8, integer :: j=1, count([logical8 >= 0]))], &
+    [(logical16, integer :: j=1, count([logical16 >= 0]))], &
+    [(logical32, integer :: j=1, count([logical32 >= 0]))], &
+    [(logical64, integer :: j=1, count([logical64 >= 0]))]]
 
   integer, parameter, private :: &
     selectedReal16 = selected_real_kind(3, 4), &      ! IEEE half
@@ -113,13 +113,13 @@ module iso_fortran_env
     real128 = merge(selectedReal128, merge(-2, -1, selectedReal128 >= 0), &
                     digits(real(0,kind=safeReal128)) == 112)
   integer, parameter :: real_kinds(*) = [ &
-    [(real16, integer :: j=1, merge(1, 0, real16==selectedReal16))], &
-    [(bfloat16, integer :: j=1, merge(1, 0, bfloat16==selectedBfloat16))], &
-    [(real32, integer :: j=1, merge(1, 0, real32==selectedReal32))], &
-    [(real64, integer :: j=1, merge(1, 0, real64==selectedReal64))], &
-    [(real80, integer :: j=1, merge(1, 0, real80==selectedReal80))], &
-    [(real64x2, integer :: j=1, merge(1, 0, real64x2==selectedReal64x2))], &
-    [(real128, integer :: j=1, merge(1, 0, real128==selectedReal128))]]
+    [(real16, integer :: j=1, count([real16==selectedReal16]))], &
+    [(bfloat16, integer :: j=1, count([bfloat16==selectedBfloat16]))], &
+    [(real32, integer :: j=1, count([real32==selectedReal32]))], &
+    [(real64, integer :: j=1, count([real64==selectedReal64]))], &
+    [(real80, integer :: j=1, count([real80==selectedReal80]))], &
+    [(real64x2, integer :: j=1, count([real64x2==selectedReal64x2]))], &
+    [(real128, integer :: j=1, count([real128==selectedReal128]))]]
 
   integer, parameter :: current_team = -1, initial_team = -2, parent_team = -3
 
