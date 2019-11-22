@@ -4,6 +4,7 @@ jobs:
   displayName: ubuntu-16.04
   pool:
     vmImage: 'ubuntu-16.04'
+  timeoutInMinutes: 360
 
   steps:
   - bash: echo "##vso[task.prependpath]$CONDA/bin"
@@ -18,14 +19,18 @@ jobs:
       source activate deps
       mkdir build
       cd build
+      export CC=clang
+      export CXX=clang++
       cmake -G"Ninja" .. -DCMAKE_PREFIX_PATH=$CONDA_PREFIX
       ninja -j4
+      ctest --output-on-failure -j4
     displayName: Build f18
 
 - job:
   displayName: macOS-10.13
   pool:
     vmImage: 'macOS-10.13'
+  timeoutInMinutes: 360
 
   steps:
   - bash: echo "##vso[task.prependpath]$CONDA/bin"
@@ -40,14 +45,18 @@ jobs:
       source activate deps
       mkdir build
       cd build
+      export CC=clang
+      export CXX=clang++
       cmake -G"Ninja" .. -DCMAKE_PREFIX_PATH=$CONDA_PREFIX
       ninja -j4
+      ctest --output-on-failure -j4
     displayName: Build f18
 
 - job:
   displayName: vs2017-win2016
   pool:
     vmImage: 'vs2017-win2016'
+  timeoutInMinutes: 360
 
   steps:
   - powershell: Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
@@ -62,6 +71,10 @@ jobs:
       call activate deps
       mkdir build
       cd build
+      set CC=clang
+      set CXX=clang++
+      call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" amd64
       cmake -G"Ninja" .. -DCMAKE_PREFIX_PATH=%CONDA_PREFIX%/Library
       ninja -j4
+      ctest --output-on-failure -j4
     displayName: Build f18
