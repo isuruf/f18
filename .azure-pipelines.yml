@@ -1,0 +1,67 @@
+
+jobs:
+- job:
+  displayName: ubuntu-16.04
+  pool:
+    vmImage: 'ubuntu-16.04'
+
+  steps:
+  - bash: echo "##vso[task.prependpath]$CONDA/bin"
+    displayName: Add conda to PATH
+
+  - bash: |
+      conda config --add channels conda-forge
+      conda create --yes --quiet --name deps clangdev=9.0.0 lld cmake ninja
+    displayName: Install clang and lld
+
+  - bash: |
+      source activate deps
+      mkdir build
+      cd build
+      cmake -G"Ninja" .. -DCMAKE_PREFIX_PATH=$CONDA_PREFIX
+      ninja -j4
+    displayName: Build f18
+
+- job:
+  displayName: macOS-10.13
+  pool:
+    vmImage: 'macOS-10.13'
+
+  steps:
+  - bash: echo "##vso[task.prependpath]$CONDA/bin"
+    displayName: Add conda to PATH
+
+  - bash: |
+      conda config --add channels conda-forge
+      conda create --yes --quiet --name deps clangdev=9.0.0 lld cmake ninja
+    displayName: Install clang and lld
+
+  - bash: |
+      source activate deps
+      mkdir build
+      cd build
+      cmake -G"Ninja" .. -DCMAKE_PREFIX_PATH=$CONDA_PREFIX
+      ninja -j4
+    displayName: Build f18
+
+- job:
+  displayName: vs2017-win2016
+  pool:
+    vmImage: 'vs2017-win2016'
+
+  steps:
+  - powershell: Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
+    displayName: Add conda to PATH
+
+  - script: |
+      conda config --add channels conda-forge
+      conda create --yes --quiet --name deps clangdev=9.0.0 lld cmake ninja
+    displayName: Install clang and lld
+
+  - script: |
+      call activate deps
+      mkdir build
+      cd build
+      cmake -G"Ninja" .. -DCMAKE_PREFIX_PATH=%CONDA_PREFIX%/Library
+      ninja -j4
+    displayName: Build f18
