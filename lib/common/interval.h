@@ -21,6 +21,7 @@
 #include "idioms.h"
 #include <cstddef>
 #include <utility>
+#include <algorithm>
 
 namespace Fortran::common {
 
