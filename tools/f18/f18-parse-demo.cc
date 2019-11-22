@@ -47,9 +47,11 @@
 #include <optional>
 #include <stdlib.h>
 #include <string>
+#ifndef _WIN32
 #include <sys/wait.h>
 #include <time.h>
 #include <unistd.h>
+#endif
 #include <vector>
 
 static std::list<std::string> argList(int argc, char *const argv[]) {

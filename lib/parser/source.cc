@@ -21,10 +21,12 @@
 #include <cstring>
 #include <fcntl.h>
 #include <memory>
+#ifndef _WIN32
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#endif
 #include <vector>
 
 // TODO: Port to Windows &c.

@@ -26,11 +26,13 @@
 #include <fstream>
 #include <ostream>
 #include <set>
+#ifndef _WIN32
 #include <string_view>
 #include <sys/file.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#endif
 #include <vector>
 
 namespace Fortran::semantics {
