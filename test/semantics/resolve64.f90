@@ -1,17 +1,3 @@
-! Copyright (c) 2019, NVIDIA CORPORATION.  All rights reserved.
-!
-! Licensed under the Apache License, Version 2.0 (the "License");
-! you may not use this file except in compliance with the License.
-! You may obtain a copy of the License at
-!
-!     http://www.apache.org/licenses/LICENSE-2.0
-!
-! Unless required by applicable law or agreed to in writing, software
-! distributed under the License is distributed on an "AS IS" BASIS,
-! WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-! See the License for the specific language governing permissions and
-! limitations under the License.
-
 !OPTIONS: -flogical-abbreviations -fxor-operator
 
 ! Like m4 in resolve63 but compiled with different options.
@@ -51,9 +37,9 @@ contains
   subroutine s1(x, y, z)
     logical :: x
     complex :: y, z
-    !ERROR: No user-defined or intrinsic .A. operator matches operand types COMPLEX(4) and COMPLEX(4)
+    !ERROR: No intrinsic or user-defined OPERATOR(.A.) matches operand types COMPLEX(4) and COMPLEX(4)
     x = y .and. z
-    !ERROR: No user-defined or intrinsic .A. operator matches operand types COMPLEX(4) and COMPLEX(4)
+    !ERROR: No intrinsic or user-defined OPERATOR(.A.) matches operand types COMPLEX(4) and COMPLEX(4)
     x = y .a. z
   end
 end

@@ -1,22 +1,10 @@
-! Copyright (c) 2019, NVIDIA CORPORATION.  All rights reserved.
-!
-! Licensed under the Apache License, Version 2.0 (the "License");
-! you may not use this file except in compliance with the License.
-! You may obtain a copy of the License at
-!
-!     http://www.apache.org/licenses/LICENSE-2.0
-!
-! Unless required by applicable law or agreed to in writing, software
-! distributed under the License is distributed on an "AS IS" BASIS,
-! WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-! See the License for the specific language governing permissions and
-! limitations under the License.
-
 ! Error tests for structure constructors.
 ! Errors caught by name resolution are tested elsewhere; these are the
 ! errors meant to be caught by expression semantic analysis, as well as
 ! acceptable use cases.
 ! Type parameters are used here to make the parses unambiguous.
+! C796 (R756) The derived-type-spec shall not specify an abstract type (7.5.7).
+!   This refers to a derived-type-spec used in a structure constructor
 
 module module1
   type :: type1(j)
@@ -43,7 +31,7 @@ module module1
     type(type2(0,0)), intent(in) :: x
   end subroutine type2arg
   subroutine abstractarg(x)
-    type(abstract(0)), intent(in) :: x
+    class(abstract(0)), intent(in) :: x
   end subroutine abstractarg
   subroutine errors
     call type1arg(type1(0)())

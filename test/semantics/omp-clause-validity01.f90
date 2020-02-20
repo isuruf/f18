@@ -1,17 +1,3 @@
-! Copyright (c) 2019, NVIDIA CORPORATION.  All rights reserved.
-!
-! Licensed under the Apache License, Version 2.0 (the "License");
-! you may not use this file except in compliance with the License.
-! You may obtain a copy of the License at
-!
-!     http://www.apache.org/licenses/LICENSE-2.0
-!
-! Unless required by applicable law or agreed to in writing, software
-! distributed under the License is distributed on an "AS IS" BASIS,
-! WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-! See the License for the specific language governing permissions and
-! limitations under the License.
-
 ! OPTIONS: -fopenmp
 
 ! Check OpenMP clause validity for the following directives:
@@ -57,7 +43,9 @@
   !ERROR: COLLAPSE clause is not allowed on the PARALLEL directive
   !$omp parallel collapse(2)
   do i = 1, N
-     a = 3.14
+     do j = 1, N
+        a = 3.14
+     enddo
   enddo
   !$omp end parallel
 
@@ -157,7 +145,7 @@
   enddo
 
   !ERROR: The parameter of the ORDERED clause must be greater than or equal to the parameter of the COLLAPSE clause
-  !$omp do collapse(num) ordered(1+2+3+4)
+  !$omp do collapse(num-14) ordered(1)
   do i = 1, N
      do j = 1, N
         do k = 1, N
@@ -323,7 +311,9 @@
   !ERROR: NOGROUP clause is not allowed on the DO SIMD directive
   !$omp do simd ordered(2) NOGROUP
   do i = 1, N
-     a = 3.14
+     do j = 1, N
+        a = 3.14
+     enddo
   enddo
   !$omp end parallel
 

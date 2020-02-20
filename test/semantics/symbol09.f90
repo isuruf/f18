@@ -1,17 +1,3 @@
-! Copyright (c) 2018-2019, NVIDIA CORPORATION.  All rights reserved.
-!
-! Licensed under the Apache License, Version 2.0 (the "License");
-! you may not use this file except in compliance with the License.
-! You may obtain a copy of the License at
-!
-!     http://www.apache.org/licenses/LICENSE-2.0
-!
-! Unless required by applicable law or agreed to in writing, software
-! distributed under the License is distributed on an "AS IS" BASIS,
-! WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-! See the License for the specific language governing permissions and
-! limitations under the License.
-
 !DEF: /s1 (Subroutine) Subprogram
 subroutine s1
  !DEF: /s1/a ObjectEntity REAL(4)
@@ -81,7 +67,7 @@ subroutine s4
   integer :: a
  end type t
  !REF: /s4/t
- !DEF: /s4/x ObjectEntity TYPE(t(k=1_4))
+ !DEF: /s4/x (InDataStmt) ObjectEntity TYPE(t(k=1_4))
  type(t(1)) :: x
  !REF: /s4/x
  !REF: /s4/t
@@ -118,8 +104,8 @@ subroutine s6
  !DEF: /s6/a ObjectEntity INTEGER(4)
  integer :: a(5) = 1
  !DEF: /s6/Block1/i ObjectEntity INTEGER(4)
- !DEF: /s6/Block1/j (LocalityLocal) ObjectEntity INTEGER(8)
- !DEF: /s6/Block1/k (Implicit, LocalityLocalInit) ObjectEntity INTEGER(4)
+ !DEF: /s6/Block1/j (LocalityLocal) HostAssoc INTEGER(8)
+ !DEF: /s6/Block1/k (LocalityLocalInit) HostAssoc INTEGER(4)
   !DEF: /s6/Block1/a (LocalityShared) HostAssoc INTEGER(4)
  do concurrent(integer::i=1:5)local(j)local_init(k)shared(a)
   !REF: /s6/Block1/a
@@ -149,7 +135,7 @@ subroutine s8
  !DEF: /s8/ImpliedDos1/i (Implicit) ObjectEntity INTEGER(4)
  !REF: /s8/z
  !DEF: /s8/ImpliedDos2/i (Implicit) ObjectEntity INTEGER(4)
- !DEF: /s8/x (Implicit) ObjectEntity REAL(4)
+ !DEF: /s8/x (Implicit, InDataStmt) ObjectEntity REAL(4)
  !REF: /s8/one
  data (y(i),i=1,10),(z(i),i=1,10),x/21*one/
 end subroutine

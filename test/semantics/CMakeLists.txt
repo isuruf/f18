@@ -1,16 +1,10 @@
-# Copyright (c) 2018-2019, NVIDIA CORPORATION.  All rights reserved.
+#===-- test/semantics/CMakeLists.txt ---------------------------------------===#
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+# See https://llvm.org/LICENSE.txt for license information.
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+#===------------------------------------------------------------------------===#
 
 # Run tests with test_errors.sh. It compiles the test with f18 and compares
 # actual errors produced with expected ones listed in the source.
@@ -101,12 +95,22 @@ set(ERROR_TESTS
   resolve62.f90
   resolve63.f90
   resolve64.f90
+  resolve65.f90
+  resolve66.f90
+  resolve67.f90
+  resolve68.f90
+  resolve69.f90
+  resolve70.f90
+  resolve71.f90
+  resolve72.f90
   stop01.f90
   structconst01.f90
   structconst02.f90
   structconst03.f90
   structconst04.f90
   assign01.f90
+  assign02.f90
+  assign03.f90
   if_arith02.f90
   if_arith03.f90
   if_arith04.f90
@@ -126,6 +130,7 @@ set(ERROR_TESTS
 #  altreturn02.f90
 #  altreturn03.f90
   altreturn04.f90
+  altreturn05.f90
   allocate01.f90
   allocate02.f90
   allocate03.f90
@@ -154,6 +159,7 @@ set(ERROR_TESTS
   dosemantics09.f90
   dosemantics10.f90
   dosemantics11.f90
+  dosemantics12.f90
   expr-errors01.f90
   expr-errors02.f90
   null01.f90
@@ -161,6 +167,7 @@ set(ERROR_TESTS
   omp-resolve02.f90
   omp-resolve03.f90
   omp-resolve04.f90
+  omp-resolve05.f90
   omp-clause-validity01.f90
   omp-loop-association.f90
 #  omp-nested01.f90
@@ -189,9 +196,17 @@ set(ERROR_TESTS
   call12.f90
   call13.f90
   call14.f90
+  call15.f90
+  forall01.f90
   misc-declarations.f90
   separate-module-procs.f90
   bindings01.f90
+  bad-forward-type.f90
+  c_f_pointer.f90
+  critical01.f90
+  critical02.f90
+  critical03.f90
+  block-data01.f90
 )
 
 # These test files have expected symbols in the source
@@ -211,12 +226,15 @@ set(SYMBOL_TESTS
   symbol14.f90
   symbol15.f90
   symbol16.f90
+  symbol17.f90
   omp-symbol01.f90
   omp-symbol02.f90
   omp-symbol03.f90
   omp-symbol04.f90
   omp-symbol05.f90
   omp-symbol06.f90
+  omp-symbol07.f90
+  omp-symbol08.f90
   kinds01.f90
   kinds03.f90
   procinterface01.f90
@@ -257,6 +275,8 @@ set(MODFILE_TESTS
   modfile31.f90
   modfile32.f90
   modfile33.f90
+  modfile34.f90
+  modfile35.f90
 )
 
 set(LABEL_TESTS
@@ -274,8 +294,8 @@ set(CANONDO_TESTS
   canondo*.[Ff]90
 )
 
-set(FORALL_TESTS
-  forall*.[Ff]90
+set(CRITICAL_TESTS
+  critical04.f90
 )
 
 set(GETSYMBOLS_TESTS
@@ -312,7 +332,7 @@ foreach(test ${MODFILE_TESTS})
 endforeach()
 
 foreach(test ${LABEL_TESTS} ${CANONDO_TESTS} ${DOCONCURRENT_TESTS}
-             ${FORALL_TESTS} ${GETSYMBOLS_TESTS} ${GETDEFINITION_TESTS})
+             ${CRITICAL_TESTS} ${GETSYMBOLS_TESTS} ${GETDEFINITION_TESTS})
   add_test(NAME ${test}
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/test_any.sh ${test} ${F18})
 endforeach()

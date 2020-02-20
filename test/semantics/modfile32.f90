@@ -1,17 +1,3 @@
-! Copyright (c) 2019, NVIDIA CORPORATION.  All rights reserved.
-!
-! Licensed under the Apache License, Version 2.0 (the "License");
-! you may not use this file except in compliance with the License.
-! You may obtain a copy of the License at
-!
-!     http://www.apache.org/licenses/LICENSE-2.0
-!
-! Unless required by applicable law or agreed to in writing, software
-! distributed under the License is distributed on an "AS IS" BASIS,
-! WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-! See the License for the specific language governing permissions and
-! limitations under the License.
-
 ! Resolution of generic names in expressions.
 ! Test by using generic function in a specification expression that needs
 ! to be written to a .mod file.
@@ -230,7 +216,7 @@ end
 ! end
 ! subroutine s3(x, y)
 !  real(4) :: x(1_8:10_8, 1_8:10_8)
-!  real(4) :: y(1_8:ubound(f_elem(x), 1_4))
+!  real(4) :: y(1_8:10_8)
 ! end
 !end
 

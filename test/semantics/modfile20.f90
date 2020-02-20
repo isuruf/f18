@@ -1,17 +1,3 @@
-! Copyright (c) 2019, NVIDIA CORPORATION.  All rights reserved.
-!
-! Licensed under the Apache License, Version 2.0 (the "License");
-! you may not use this file except in compliance with the License.
-! You may obtain a copy of the License at
-!
-!     http://www.apache.org/licenses/LICENSE-2.0
-!
-! Unless required by applicable law or agreed to in writing, software
-! distributed under the License is distributed on an "AS IS" BASIS,
-! WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-! See the License for the specific language governing permissions and
-! limitations under the License.
-
 ! Test modfiles for entities with initialization
 module m
   integer, parameter :: k8 = 8
@@ -22,6 +8,7 @@ module m
   character(10, kind=k1) :: c = k1_"asdf"
   character(10), parameter :: c2 = k1_"qwer"
   complex*16, parameter :: z = (1.0_k8, 2.0_k8)
+  complex*16, parameter :: zn = (-1.0_k8, 2.0_k8)
   type t
     integer :: a = 123
     type(t), pointer :: b => null()
@@ -40,10 +27,12 @@ end
 !  character(10_4,1)::c
 !  character(10_4,1),parameter::c2=1_"qwer      "
 !  complex(8),parameter::z=(1._8,2._8)
+!  complex(8),parameter::zn=(-1._8,2._8)
 !  type::t
 !    integer(4)::a=123_4
 !    type(t),pointer::b=>NULL()
 !  end type
 !  type(t),parameter::x=t(a=456_4,b=NULL())
 !  type(t),parameter::y=t(a=789_4,b=NULL())
+!  intrinsic::null
 !end

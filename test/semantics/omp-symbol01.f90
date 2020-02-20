@@ -1,17 +1,3 @@
-! Copyright (c) 2019, NVIDIA CORPORATION.  All rights reserved.
-!
-! Licensed under the Apache License, Version 2.0 (the "License");
-! you may not use this file except in compliance with the License.
-! You may obtain a copy of the License at
-!
-!     http://www.apache.org/licenses/LICENSE-2.0
-!
-! Unless required by applicable law or agreed to in writing, software
-! distributed under the License is distributed on an "AS IS" BASIS,
-! WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-! See the License for the specific language governing permissions and
-! limitations under the License.
-
 !OPTIONS: -fopenmp
 
 ! Test clauses that accept list.
@@ -59,21 +45,21 @@ program mm
  !DEF: /mm/c (Implicit) ObjectEntity REAL(4)
  c = 2.0
 !$omp parallel do  private(a,t,/c/) shared(c)
- !DEF: /mm/i (Implicit) ObjectEntity INTEGER(4)
+ !DEF: /mm/Block1/i (OmpPrivate, OmpPreDetermined) HostAssoc INTEGER(4)
  do i=1,10
   !DEF: /mm/Block1/a (OmpPrivate) HostAssoc REAL(4)
   !REF: /mm/b
-  !REF: /mm/i
+  !REF: /mm/Block1/i
   a = a+b(i)
   !DEF: /mm/Block1/t (OmpPrivate) HostAssoc TYPE(myty)
   !REF: /md/myty/a
-  !REF: /mm/i
+  !REF: /mm/Block1/i
   t%a = i
   !DEF: /mm/Block1/y (OmpPrivate) HostAssoc REAL(4)
   y = 0.
   !DEF: /mm/Block1/x (OmpPrivate) HostAssoc REAL(4)
   !REF: /mm/Block1/a
-  !REF: /mm/i
+  !REF: /mm/Block1/i
   !REF: /mm/Block1/y
   x = a+i+y
   !REF: /mm/c

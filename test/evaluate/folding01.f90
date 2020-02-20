@@ -1,17 +1,3 @@
-! Copyright (c) 2019, NVIDIA CORPORATION.  All rights reserved.
-!
-! Licensed under the Apache License, Version 2.0 (the "License");
-! you may not use this file except in compliance with the License.
-! You may obtain a copy of the License at
-!
-!     http://www.apache.org/licenses/LICENSE-2.0
-!
-! Unless required by applicable law or agreed to in writing, software
-! distributed under the License is distributed on an "AS IS" BASIS,
-! WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-! See the License for the specific language governing permissions and
-! limitations under the License.
-
 
 ! Test intrinsic operation folding
 
@@ -99,6 +85,8 @@ module m
   logical, parameter :: test_pow2 = (1**100).EQ.(1)
   logical, parameter :: test_pow3 = (2**4).EQ.(16)
   logical, parameter :: test_pow4 = (7**5).EQ.(16807)
+  logical, parameter :: test_pow5 = kind(real(1., kind=8)**cmplx(1., kind=4)).EQ.(8)
+  logical, parameter :: test_pow6 = kind(cmplx(1., kind=4)**real(1., kind=8)).EQ.(8)
 
   ! test MIN and MAX
   real, parameter :: x1 = -35., x2= -35.05, x3=0., x4=35.05, x5=35.

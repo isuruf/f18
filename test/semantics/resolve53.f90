@@ -1,17 +1,3 @@
-! Copyright (c) 2019, NVIDIA CORPORATION.  All rights reserved.
-!
-! Licensed under the Apache License, Version 2.0 (the "License");
-! you may not use this file except in compliance with the License.
-! You may obtain a copy of the License at
-!
-!     http://www.apache.org/licenses/LICENSE-2.0
-!
-! Unless required by applicable law or agreed to in writing, software
-! distributed under the License is distributed on an "AS IS" BASIS,
-! WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-! See the License for the specific language governing permissions and
-! limitations under the License.
-
 ! 15.4.3.4.5 Restrictions on generic declarations
 ! Specific procedures of generic interfaces must be distinguishable.
 
@@ -239,13 +225,16 @@ module m14
   end interface
 contains
   real function f1(x, y)
-    real :: x, y
+    real, intent(in) :: x
+    logical, intent(in) :: y
   end
   integer function f2(x, y)
-    integer :: x, y
+    integer, intent(in) :: x
+    logical, intent(in) :: y
   end
   real function f3(x, y)
-    real :: x, y
+    real, value :: x
+    logical, value :: y
   end
 end module
 
@@ -445,32 +434,8 @@ contains
   end
 end
 
-! C1512 - rules for assignment
-! s1 and s2 are not distinguishable for a generic name but they are
-! for assignment
-module m19
-  interface assignment(=)
-    module procedure s1
-    module procedure s2
-  end interface
-  !ERROR: Generic 'g' may not have specific procedures 's1' and 's2' as their interfaces are not distinguishable
-  interface g
-    module procedure s1
-    module procedure s2
-  end interface
-contains
-  subroutine s1(d, p)
-    real, intent(out) :: d
-    integer, intent(in) :: p
-  end subroutine
-  subroutine s2(p, d)
-    integer, intent(out) :: p
-    real, intent(in) :: d
-  end subroutine
-end module
-
 ! C1511 - rules for operators
-module m20
+module m19
   interface operator(.foo.)
     module procedure f1
     module procedure f2

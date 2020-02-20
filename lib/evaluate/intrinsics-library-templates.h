@@ -1,16 +1,10 @@
-// Copyright (c) 2019, NVIDIA CORPORATION.  All rights reserved.
+//===-- lib/evaluate/intrinsics-library-templates.h -------------*- C++ -*-===//
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+//===----------------------------------------------------------------------===//
 
 #ifndef FORTRAN_EVALUATE_INTRINSICS_LIBRARY_TEMPLATES_H_
 #define FORTRAN_EVALUATE_INTRINSICS_LIBRARY_TEMPLATES_H_
@@ -19,13 +13,13 @@
 // function of the structures defined in intrinsics-library.h. It should only be
 // included if these member functions are used, else intrinsics-library.h is
 // sufficient. This is to avoid circular dependencies. The below implementation
-// cannot be defined in .cc file because it would be too cumbersome to decide
+// cannot be defined in .cpp file because it would be too cumbersome to decide
 // which version should be instantiated in a generic way.
 
 #include "host.h"
-#include "intrinsics-library.h"
-#include "type.h"
-#include "../common/template.h"
+#include "flang/common/template.h"
+#include "flang/evaluate/intrinsics-library.h"
+#include "flang/evaluate/type.h"
 
 #include <tuple>
 #include <type_traits>

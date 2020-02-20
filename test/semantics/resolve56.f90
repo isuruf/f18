@@ -1,17 +1,3 @@
-! Copyright (c) 2019, NVIDIA CORPORATION.  All rights reserved.
-!
-! Licensed under the Apache License, Version 2.0 (the "License");
-! you may not use this file except in compliance with the License.
-! You may obtain a copy of the License at
-!
-!     http://www.apache.org/licenses/LICENSE-2.0
-!
-! Unless required by applicable law or agreed to in writing, software
-! distributed under the License is distributed on an "AS IS" BASIS,
-! WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-! See the License for the specific language governing permissions and
-! limitations under the License.
-
 ! Test that associations constructs can be correctly combined. The intrinsic
 ! functions are not what is tested here, they are only use to reveal the types
 ! of local variables.
@@ -43,7 +29,7 @@
   end select
   select type(a)
     type is (integer)
-     !ERROR: Actual argument for 'x=' has bad type 'Integer(4)'
+     !ERROR: Actual argument for 'x=' has bad type 'INTEGER(4)'
      res = acos(a)
   end select
 
@@ -55,12 +41,12 @@
           type is (real)
             res = acos(a)
             res = acos(y)
-            !ERROR: Actual argument for 'x=' has bad type 'Integer(4)'
+            !ERROR: Actual argument for 'x=' has bad type 'INTEGER(4)'
             res = acos(b)
           type is (integer)
             ires = selected_int_kind(b)
             zres = acos(z)
-           !ERROR: Actual argument for 'x=' has bad type 'Integer(4)'
+           !ERROR: Actual argument for 'x=' has bad type 'INTEGER(4)'
            res = acos(a)
         end select
       end associate

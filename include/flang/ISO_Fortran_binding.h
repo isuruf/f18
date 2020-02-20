@@ -1,16 +1,10 @@
-/* Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
+/*===-- include/flang/ISO_Fortran_binding.h -----------------------*- C++ -*-===
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+ * See https://llvm.org/LICENSE.txt for license information.
+ * SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * ===-----------------------------------------------------------------------===
  */
 
 #ifndef CFI_ISO_FORTRAN_BINDING_H_
@@ -36,8 +30,9 @@ inline namespace Fortran_2018 {
 #define CFI_MAX_RANK 15
 typedef unsigned char CFI_rank_t;
 
-// This type is probably larger than a default Fortran INTEGER
-// and should be used for all array indexing and loop bound calculations.
+/* This type is probably larger than a default Fortran INTEGER
+ * and should be used for all array indexing and loop bound calculations.
+ */
 typedef ptrdiff_t CFI_index_t;
 
 typedef unsigned char CFI_attribute_t;

@@ -1,22 +1,16 @@
-// Copyright (c) 2019, NVIDIA CORPORATION.  All rights reserved.
+//===-- lib/semantics/program-tree.h ----------------------------*- C++ -*-===//
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+//===----------------------------------------------------------------------===//
 
 #ifndef FORTRAN_SEMANTICS_PROGRAM_TREE_H_
 #define FORTRAN_SEMANTICS_PROGRAM_TREE_H_
 
-#include "symbol.h"
-#include "../parser/parse-tree.h"
+#include "flang/parser/parse-tree.h"
+#include "flang/semantics/symbol.h"
 #include <variant>
 
 // A ProgramTree represents a tree of program units and their contained
@@ -45,14 +39,15 @@ public:
   static ProgramTree Build(const parser::BlockData &);
 
   ENUM_CLASS(Kind,  // kind of node
-      Program, Function, Subroutine, MpSubprogram, Module, Submodule)
+      Program, Function, Subroutine, MpSubprogram, Module, Submodule, BlockData)
   using Stmt = std::variant<  // the statement that introduces the program unit
       const parser::Statement<parser::ProgramStmt> *,
       const parser::Statement<parser::FunctionStmt> *,
       const parser::Statement<parser::SubroutineStmt> *,
       const parser::Statement<parser::MpSubprogramStmt> *,
       const parser::Statement<parser::ModuleStmt> *,
-      const parser::Statement<parser::SubmoduleStmt> *>;
+      const parser::Statement<parser::SubmoduleStmt> *,
+      const parser::Statement<parser::BlockDataStmt> *>;
 
   ProgramTree(const parser::Name &name, const parser::SpecificationPart &spec,
       const parser::ExecutionPart *exec = nullptr)

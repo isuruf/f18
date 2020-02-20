@@ -1,17 +1,3 @@
-! Copyright (c) 2019, NVIDIA CORPORATION.  All rights reserved.
-!
-! Licensed under the Apache License, Version 2.0 (the "License");
-! you may not use this file except in compliance with the License.
-! You may obtain a copy of the License at
-!
-!     http://www.apache.org/licenses/LICENSE-2.0
-!
-! Unless required by applicable law or agreed to in writing, software
-! distributed under the License is distributed on an "AS IS" BASIS,
-! WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-! See the License for the specific language governing permissions and
-! limitations under the License.
-
 ! NULL() intrinsic function error tests
 
 subroutine test
@@ -74,10 +60,10 @@ subroutine test
   dt0x = dt0(ip0=null())
   dt0x = dt0(ip0=null(ip0))
   dt0x = dt0(ip0=null(mold=ip0))
-  !ERROR: TARGET type 'Real(4)' is not compatible with POINTER type 'Integer(4)'
+  !ERROR: TARGET type 'REAL(4)' is not compatible with POINTER type 'INTEGER(4)'
   !ERROR: pointer 'ip0' is associated with the result of a reference to function 'null' whose pointer result has an incompatible type or shape
   dt0x = dt0(ip0=null(mold=rp0))
-  !ERROR: TARGET type 'Real(4)' is not compatible with POINTER type 'Integer(4)'
+  !ERROR: TARGET type 'REAL(4)' is not compatible with POINTER type 'INTEGER(4)'
   !ERROR: pointer 'ip1' is associated with the result of a reference to function 'null' whose pointer result has an incompatible type or shape
   dt1x = dt1(ip1=null(mold=rp1))
   dt2x = dt2(pps0=null())

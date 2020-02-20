@@ -1,4 +1,11 @@
 #!/bin/bash
+#===-- tools/f18/flang.sh -----------------------------------------*- sh -*-===#
+#
+# Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+# See https://llvm.org/LICENSE.txt for license information.
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+#
+#===------------------------------------------------------------------------===#
 
 function abspath() {
   pushd . > /dev/null;
@@ -19,4 +26,4 @@ function abspath() {
 
 wd=`abspath $(dirname "$0")/..`
 
-${wd}/bin/f18 -fdebug-semantics -module-suffix .f18.mod -intrinsic-module-directory ${wd}/include $*
+${wd}/bin/f18 -module-suffix .f18.mod -intrinsic-module-directory ${wd}/include $*

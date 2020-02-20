@@ -1,16 +1,10 @@
-# Copyright (c) 2018-2019, NVIDIA CORPORATION.  All rights reserved.
+#===-- CMakeLists.txt ------------------------------------------------------===#
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+# See https://llvm.org/LICENSE.txt for license information.
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+#===------------------------------------------------------------------------===#
 
 cmake_minimum_required(VERSION 3.9.0)
 
@@ -24,8 +18,9 @@ if( GCC )
   set(CMAKE_INSTALL_RPATH "${GCC}/lib64")
 endif()
 if(BUILD_WITH_CLANG)
-  set(CMAKE_CXX_COMPILER "${BUILD_WITH_CLANG}/bin/clang++")
-  set(CMAKE_CC_COMPILER "${BUILD_WITH_CLANG}/bin/clang")
+  file(TO_CMAKE_PATH "${BUILD_WITH_CLANG}" CLANG_PATH)
+  set(CMAKE_CXX_COMPILER "${CLANG_PATH}/bin/clang++")
+  set(CMAKE_CC_COMPILER "${CLANG_PATH}/bin/clang")
   if(GCC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --gcc-toolchain=${GCC}")
   endif()
@@ -55,6 +50,10 @@ message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}" )
 find_package(LLVM REQUIRED CONFIG)
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION} in ${LLVM_DIR}")
 
+list(APPEND CMAKE_MODULE_PATH ${LLVM_DIR})
+
+include(AddLLVM)
+
 # Get names for the LLVM libraries
 #
 # The full list of LLVM components can be obtained with
@@ -71,8 +70,18 @@ message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION} in ${LLVM_DIR}")
 #  https://stackoverflow.com/questions/41924375/llvm-how-to-specify-all-link-libraries-as-input-to-llvm-map-components-to-libna
 #  https://stackoverflow.com/questions/33948633/how-do-i-link-when-building-with-llvm-libraries
 
-include_directories(${LLVM_INCLUDE_DIRS})
+# Add LLVM include files as if they were SYSTEM because there are complex unused
+# parameter issues that may or may not appear depending on the environments and
+# compilers (ifdefs are involved). This allows warnings from LLVM headers to be
+# ignored while keeping -Wunused-parameter a fatal error inside f18 code base.
+# This may have to be fine-tuned if flang headers are consider part of this
+# LLVM_INCLUDE_DIRS when merging in the monorepo (Warning from flang headers
+# should not be suppressed).
+include_directories(SYSTEM ${LLVM_INCLUDE_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
+
+# LLVM_LIT_EXTERNAL store in cache so it could be used by AddLLVM.cmake
+set(LLVM_EXTERNAL_LIT ${LLVM_TOOLS_BINARY_DIR}/llvm-lit CACHE STRING "Command used to spawn lit")
 
 if(LINK_WITH_FIR)
   message(STATUS "Linking driver with FIR and LLVM")
@@ -123,6 +132,7 @@ message(STATUS "FLANG version: ${FLANG_VERSION}")
 
 set(FLANG_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(FLANG_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
+set(FLANG_TOOLS_DIR  ${FLANG_BINARY_DIR}/tools/f18/bin)
 
 include_directories(BEFORE
   ${FLANG_BINARY_DIR}/include
@@ -136,6 +146,7 @@ add_subdirectory(lib)
 add_subdirectory(runtime)
 add_subdirectory(test)
 add_subdirectory(tools)
+add_subdirectory(test-lit)
 
 configure_file(
   ${FLANG_SOURCE_DIR}/include/flang/Config/config.h.cmake

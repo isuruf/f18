@@ -1,29 +1,16 @@
-! Copyright (c) 2019, NVIDIA CORPORATION.  All rights reserved.
-!
-! Licensed under the Apache License, Version 2.0 (the "License");
-! you may not use this file except in compliance with the License.
-! You may obtain a copy of the License at
-!
-!     http://www.apache.org/licenses/LICENSE-2.0
-!
-! Unless required by applicable law or agreed to in writing, software
-! distributed under the License is distributed on an "AS IS" BASIS,
-! WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-! See the License for the specific language governing permissions and
-! limitations under the License.
-
-! Test 15.7 C1591 & others: contexts requiring PURE subprograms
+! Test 15.7 C1591 & others: contexts requiring pure subprograms
 
 module m
 
   type :: t
    contains
-    procedure, nopass :: tbp => pure
+    procedure, nopass :: tbp_pure => pure
+    procedure, nopass :: tbp_impure => impure
   end type
   type, extends(t) :: t2
    contains
-    !ERROR: An overridden PURE type-bound procedure binding must also be PURE
-    procedure, nopass :: tbp => impure ! 7.5.7.3
+    !ERROR: An overridden pure type-bound procedure binding must also be pure
+    procedure, nopass :: tbp_pure => impure ! 7.5.7.3
   end type
 
  contains
@@ -45,10 +32,51 @@ module m
       !ERROR: Impure procedure 'impure' may not be referenced in a FORALL
       a(j) = impure(j) ! C1037
     end forall
-    !ERROR: Concurrent-header mask expression cannot reference an impure procedure
+    forall (j=1:1)
+      !ERROR: Impure procedure 'impure' may not be referenced in a FORALL
+      a(j) = pure(impure(j)) ! C1037
+    end forall
+    !ERROR: DO CONCURRENT mask expression may not reference impure procedure 'impure'
     do concurrent (j=1:1, impure(j) /= 0) ! C1121
       !ERROR: Call to an impure procedure is not allowed in DO CONCURRENT
       a(j) = impure(j) ! C1139
     end do
   end subroutine
+
+  subroutine test2
+    type(t) :: x
+    real :: a(x%tbp_pure(1)) ! ok
+    !ERROR: Invalid specification expression: reference to impure function 'impure'
+    real :: b(x%tbp_impure(1))
+    forall (j=1:1)
+      a(j) = x%tbp_pure(j) ! ok
+    end forall
+    forall (j=1:1)
+      !ERROR: Impure procedure 'impure' may not be referenced in a FORALL
+      a(j) = x%tbp_impure(j) ! C1037
+    end forall
+    do concurrent (j=1:1, x%tbp_pure(j) /= 0) ! ok
+      a(j) = x%tbp_pure(j) ! ok
+    end do
+    !ERROR: DO CONCURRENT mask expression may not reference impure procedure 'impure'
+    do concurrent (j=1:1, x%tbp_impure(j) /= 0) ! C1121
+      !ERROR: Call to an impure procedure component is not allowed in DO CONCURRENT
+      a(j) = x%tbp_impure(j) ! C1139
+    end do
+  end subroutine
+
+  subroutine test3
+    type :: t
+      integer :: i
+    end type
+    type(t) :: a(10), b
+    forall (i=1:10)
+      a(i) = t(pure(i))  ! OK
+    end forall
+    forall (i=1:10)
+      !ERROR: Impure procedure 'impure' may not be referenced in a FORALL
+      a(i) = t(impure(i))  ! C1037
+    end forall
+  end subroutine
+
 end module

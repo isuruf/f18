@@ -1,17 +1,3 @@
-! Copyright (c) 2019, NVIDIA CORPORATION.  All rights reserved.
-!
-! Licensed under the Apache License, Version 2.0 (the "License");
-! you may not use this file except in compliance with the License.
-! You may obtain a copy of the License at
-!
-!     http://www.apache.org/licenses/LICENSE-2.0
-!
-! Unless required by applicable law or agreed to in writing, software
-! distributed under the License is distributed on an "AS IS" BASIS,
-! WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-! See the License for the specific language governing permissions and
-! limitations under the License.
-
 ! Check for semantic errors in ALLOCATE statements
 
 subroutine C946(param_ca_4_assumed, param_ta_4_assumed, param_ca_4_deferred)
@@ -38,17 +24,19 @@ subroutine C946(param_ca_4_assumed, param_ta_4_assumed, param_ca_4_deferred)
 
   real(kind=4) srcx, srcx_array(10)
   real(kind=8) srcx8, srcx8_array(10)
-  class(WithParam(4, 2)) src_a_4_2
+  class(WithParam(4, 2)), allocatable :: src_a_4_2
   type(WithParam(8, 2)) src_a_8_2
-  class(WithParam(4, :)) src_a_4_def
-  class(WithParam(8, :)) src_a_8_def
+  class(WithParam(4, :)), allocatable :: src_a_4_def
+  class(WithParam(8, :)), allocatable :: src_a_8_def
   type(WithParamExtent(4, 2, 8, 3)) src_b_4_2_8_3
-  class(WithParamExtent(4, :, 8, 3)) src_b_4_def_8_3
+  class(WithParamExtent(4, :, 8, 3)), allocatable :: src_b_4_def_8_3
   type(WithParamExtent(8, 2, 8, 3)) src_b_8_2_8_3
-  class(WithParamExtent(8, :, 8, 3)) src_b_8_def_8_3
+  class(WithParamExtent(8, :, 8, 3)), allocatable :: src_b_8_def_8_3
   type(WithParamExtent2(k1=4, l1=5, k2=5, l2=6, l3=8 )) src_c_4_5_5_6_8_8
-  class(WithParamExtent2(k1=4, l1=2, k2=5, l2=6, k3=5, l3=8)) src_c_4_2_5_6_5_8
-  class(WithParamExtent2(k2=5, l2=6, k3=5, l3=8)) src_c_1_2_5_6_5_8
+  class(WithParamExtent2(k1=4, l1=2, k2=5, l2=6, k3=5, l3=8)), &
+      allocatable :: src_c_4_2_5_6_5_8
+  class(WithParamExtent2(k2=5, l2=6, k3=5, l3=8)), &
+      allocatable :: src_c_1_2_5_6_5_8
   type(WithParamExtent2(k1=5, l1=5, k2=5, l2=6, l3=8 )) src_c_5_5_5_6_8_8
   type(WithParamExtent2(k1=5, l1=2, k2=5, l2=6, k3=5, l3=8)) src_c_5_2_5_6_5_8
 

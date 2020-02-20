@@ -1,17 +1,3 @@
-! Copyright (c) 2019, NVIDIA CORPORATION.  All rights reserved.
-!
-! Licensed under the Apache License, Version 2.0 (the "License");
-! you may not use this file except in compliance with the License.
-! You may obtain a copy of the License at
-!
-!     http://www.apache.org/licenses/LICENSE-2.0
-!
-! Unless required by applicable law or agreed to in writing, software
-! distributed under the License is distributed on an "AS IS" BASIS,
-! WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-! See the License for the specific language governing permissions and
-! limitations under the License.
-
 ! Error tests for structure constructors: per-component type
 ! (in)compatibility.
 
@@ -44,11 +30,11 @@ module module1
 !    call scalararg(scalar(4)(5.,6,(7._8,8._2),4_'b',.true._4))
     call scalararg(scalar(4)(ix=5.,rx=6,zx=(7._8,8._2),cx=4_'b',lx=.true.))
     call scalararg(scalar(4)(5.,6,(7._8,8._2),4_'b',.true.))
-    !ERROR: Value in structure constructor of type Character(1) is incompatible with component 'ix' of type Integer(4)
+    !ERROR: Value in structure constructor of type CHARACTER(1) is incompatible with component 'ix' of type INTEGER(4)
     call scalararg(scalar(4)(ix='a'))
-    !ERROR: Value in structure constructor of type Logical(4) is incompatible with component 'ix' of type Integer(4)
+    !ERROR: Value in structure constructor of type LOGICAL(4) is incompatible with component 'ix' of type INTEGER(4)
     call scalararg(scalar(4)(ix=.false.))
-    !ERROR: Value in structure constructor of type Integer(4) is incompatible with component 'ix' of type Integer(4)
+    !ERROR: Value in structure constructor of type INTEGER(4) is incompatible with component 'ix' of type INTEGER(4)
     call scalararg(scalar(4)(ix=[1]))
     !TODO more!
   end subroutine errors

@@ -1,5 +1,9 @@
-<!--
-Copyright (c) 2018-2019, NVIDIA CORPORATION.  All rights reserved.
+<!--===- documentation/Extensions.md 
+  
+   Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+   See https://llvm.org/LICENSE.txt for license information.
+   SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+  
 -->
 
 As a general principle, this compiler will accept by default and
@@ -14,15 +18,16 @@ accepted if enabled by command-line options.
 
 Intentional violations of the standard
 ======================================
-* The default `INTEGER` type is required by the standard to occupy
-  the same amount of storage as the default `REAL` type.  Default
-  `REAL` is of course 32-bit IEEE-754 floating-point today.  This legacy
-  rule imposes an artificially small constraint in some cases
-  where Fortran mandates that something have the default `INTEGER`
-  type: specifically, the results of references to the intrinsic functions
-  `SIZE`, `LBOUND`, `UBOUND`, `SHAPE`, and the location reductions
-  `FINDLOC`, `MAXLOC`, and `MINLOC`.  We return `INTEGER(KIND=8)` by
-  default in these cases.
+* Scalar `INTEGER` actual argument expressions (not variables!)
+  are converted to the kinds of scalar `INTEGER` dummy arguments
+  when the interface is explicit and the kinds differ.
+  This conversion allows the results of the intrinsics like
+  `SIZE` that (as mentioned below) may return non-default
+  `INTEGER` results by default to be passed.  A warning is
+  emitted when truncation is possible.
+* We are not strict on the contents of `BLOCK DATA` subprograms
+  so long as they contain no executable code, no internal subprograms,
+  and allocate no storage outside a named `COMMON` block.  (C1415)
 
 Extensions, deletions, and legacy features supported by default
 ===============================================================
@@ -109,6 +114,11 @@ Extensions, deletions, and legacy features supported by default
 * When a dummy argument is `POINTER` or `ALLOCATABLE` and is `INTENT(IN)`, we
   relax enforcement of some requirements on actual arguments that must otherwise
   hold true for definable arguments.
+* Assignment of `LOGICAL` to `INTEGER` and vice versa (but not other types) is
+  allowed.  The values are normalized.
+* An effectively empty source file (no program unit) is accepted and
+  produces an empty relocatable output file.
+* A `RETURN` statement may appear in a main program.
 
 Extensions supported when enabled by options
 --------------------------------------------
@@ -117,6 +127,16 @@ Extensions supported when enabled by options
 * Logical abbreviations `.T.`, `.F.`, `.N.`, `.A.`, `.O.`, and `.X.`
   [-flogical-abbreviations]
 * `.XOR.` as a synonym for `.NEQV.` [-fxor-operator]
+* The default `INTEGER` type is required by the standard to occupy
+  the same amount of storage as the default `REAL` type.  Default
+  `REAL` is of course 32-bit IEEE-754 floating-point today.  This legacy
+  rule imposes an artificially small constraint in some cases
+  where Fortran mandates that something have the default `INTEGER`
+  type: specifically, the results of references to the intrinsic functions
+  `SIZE`, `LBOUND`, `UBOUND`, `SHAPE`, and the location reductions
+  `FINDLOC`, `MAXLOC`, and `MINLOC` in the absence of an explicit
+  `KIND=` actual argument.  We return `INTEGER(KIND=8)` by default in
+  these cases when the `-flarge-sizes` option is enabled.
 
 Extensions and legacy features deliberately not supported
 ---------------------------------------------------------
@@ -140,7 +160,7 @@ Extensions and legacy features deliberately not supported
 * Defining an explicit interface for a subprogram within itself (PGI only)
 * USE association of a procedure interface within that same procedure's definition
 * NULL() as a structure constructor expression for an ALLOCATABLE component (PGI).
-* Conversion of LOGICAL to INTEGER.
+* Conversion of LOGICAL to INTEGER in expressions.
 * IF (integer expression) THEN ... END IF  (PGI/Intel)
 * Comparsion of LOGICAL with ==/.EQ. rather than .EQV. (also .NEQV.) (PGI/Intel)
 * Procedure pointers in COMMON blocks (PGI/Intel)

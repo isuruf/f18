@@ -1,31 +1,22 @@
-! Copyright (c) 2019, NVIDIA CORPORATION.  All rights reserved.
+!===-- module/iso_c_binding.f90 --------------------------------------------===!
 !
-! Licensed under the Apache License, Version 2.0 (the "License");
-! you may not use this file except in compliance with the License.
-! You may obtain a copy of the License at
+! Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+! See https://llvm.org/LICENSE.txt for license information.
+! SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 !
-!     http://www.apache.org/licenses/LICENSE-2.0
-!
-! Unless required by applicable law or agreed to in writing, software
-! distributed under the License is distributed on an "AS IS" BASIS,
-! WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-! See the License for the specific language governing permissions and
-! limitations under the License.
+!===------------------------------------------------------------------------===!
 
 ! See Fortran 2018, clause 18.2
 
 module iso_c_binding
 
-  type :: c_ptr
-    integer(kind=8) :: address
-  end type c_ptr
+  use __Fortran_builtins, only: &
+    c_f_pointer => __builtin_c_f_pointer, &
+    c_ptr => __builtin_c_ptr, &
+    c_funptr => __builtin_c_funptr
 
-  type :: c_funptr
-    integer(kind=8) :: address
-  end type c_funptr
-
-  type(c_ptr), parameter :: c_null_ptr = c_ptr(0)
-  type(c_funptr), parameter :: c_null_funptr = c_funptr(0)
+  type(c_ptr), parameter :: c_null_ptr = c_ptr()
+  type(c_funptr), parameter :: c_null_funptr = c_funptr()
 
   ! Table 18.2 (in clause 18.3.1)
   ! TODO: Specialize (via macros?) for alternative targets
@@ -89,26 +80,18 @@ module iso_c_binding
   logical function c_associated(c_ptr_1, c_ptr_2)
     type(c_ptr), intent(in) :: c_ptr_1
     type(c_ptr), intent(in), optional :: c_ptr_2
-    if (c_ptr_1%address == c_null_ptr%address) then
+    if (c_ptr_1%__address == c_null_ptr%__address) then
       c_associated = .false.
     else if (present(c_ptr_2)) then
-      c_associated = c_ptr_1%address == c_ptr_2%address
+      c_associated = c_ptr_1%__address == c_ptr_2%__address
     else
       c_associated = .true.
     end if
   end function c_associated
 
-  subroutine c_f_pointer(cptr, fptr, shape)
-    type(c_ptr), intent(in) :: cptr
-    type(*), pointer, dimension(..), intent(out) :: fptr
-    ! TODO: Use a larger kind for shape than default integer
-    integer, intent(in), optional :: shape(:) ! size(shape) == rank(fptr)
-    ! TODO: Define, or write in C and change this to an interface
-  end subroutine c_f_pointer
-
   function c_loc(x)
     type(c_ptr) :: c_loc
-    type(*), intent(in) :: x
+    type(*), dimension(:), intent(in) :: x
     c_loc = c_ptr(loc(x))
   end function c_loc
 

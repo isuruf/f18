@@ -1,16 +1,10 @@
-// Copyright (c) 2019, NVIDIA CORPORATION.  All rights reserved.
+//===-- runtime/entry-names.h -----------------------------------*- C++ -*-===//
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+//===----------------------------------------------------------------------===//
 
 // Defines the macro RTNAME(n) which decorates the external name of a runtime
 // library function or object with extra characters so that it
@@ -22,7 +16,7 @@
 // runtime library must change in some way that breaks backward compatibility.
 
 #ifndef RTNAME
-#define PREFIX _Fortran
-#define REVISION A
-#define RTNAME(name) PREFIX##REVISION##name
+#define NAME_WITH_PREFIX_AND_REVISION(prefix, revision, name) \
+  prefix##revision##name
+#define RTNAME(name) NAME_WITH_PREFIX_AND_REVISION(_Fortran, A, name)
 #endif

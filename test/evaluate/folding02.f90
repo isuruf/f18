@@ -1,17 +1,3 @@
-! Copyright (c) 2019, NVIDIA CORPORATION.  All rights reserved.
-!
-! Licensed under the Apache License, Version 2.0 (the "License");
-! you may not use this file except in compliance with the License.
-! You may obtain a copy of the License at
-!
-!     http://www.apache.org/licenses/LICENSE-2.0
-!
-! Unless required by applicable law or agreed to in writing, software
-! distributed under the License is distributed on an "AS IS" BASIS,
-! WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-! See the License for the specific language governing permissions and
-! limitations under the License.
-
 ! Check intrinsic function folding with host runtime library
 
 module m
@@ -46,6 +32,11 @@ module m
   TEST_R4(acos, acos(0.5_4), 1.0471975803375244140625_4)
   TEST_R4(acosh, acosh(1.5_4), 0.96242368221282958984375_4)
   logical, parameter :: test_aint1 = aint(2.783).EQ.(2.)
+  logical, parameter :: test_anint1 = anint(2.783).EQ.(3.)
+  logical, parameter :: test_floor1 = floor(-2.783).EQ.(-3.)
+  logical, parameter :: test_floor2 = floor(2.783).EQ.(2.)
+  logical, parameter :: test_ceiling1 = ceiling(-2.783).EQ.(-2.)
+  logical, parameter :: test_ceiling2 = ceiling(2.783).EQ.(3.)
   TEST_R4(asin, asin(0.9_4), 1.11976945400238037109375_4)
   TEST_R4(asinh, asinh(1._4), 0.881373584270477294921875_4)
   TEST_R4(atan, atan(1.5_4), 0.982793748378753662109375_4)

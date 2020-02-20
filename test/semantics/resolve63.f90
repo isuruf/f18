@@ -1,17 +1,3 @@
-! Copyright (c) 2019, NVIDIA CORPORATION.  All rights reserved.
-!
-! Licensed under the Apache License, Version 2.0 (the "License");
-! you may not use this file except in compliance with the License.
-! You may obtain a copy of the License at
-!
-!     http://www.apache.org/licenses/LICENSE-2.0
-!
-! Unless required by applicable law or agreed to in writing, software
-! distributed under the License is distributed on an "AS IS" BASIS,
-! WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-! See the License for the specific language governing permissions and
-! limitations under the License.
-
 ! Invalid operand types when user-defined operator is available
 module m1
   type :: t
@@ -61,36 +47,36 @@ contains
   subroutine test_relational()
     l = x == y  !OK
     l = x .eq. y  !OK
-    !ERROR: No user-defined or intrinsic == operator matches operand types TYPE(t) and REAL(4)
+    !ERROR: No intrinsic or user-defined OPERATOR(==) matches operand types TYPE(t) and REAL(4)
     l = x == r
   end
   subroutine test_numeric()
     l = x + r  !OK
-    !ERROR: No user-defined or intrinsic + operator matches operand types REAL(4) and TYPE(t)
+    !ERROR: No intrinsic or user-defined OPERATOR(+) matches operand types REAL(4) and TYPE(t)
     l = r + x
   end
   subroutine test_logical()
     l = x .and. r  !OK
-    !ERROR: No user-defined or intrinsic .AND. operator matches operand types REAL(4) and TYPE(t)
+    !ERROR: No intrinsic or user-defined OPERATOR(.AND.) matches operand types REAL(4) and TYPE(t)
     l = r .and. x
   end
   subroutine test_unary()
     l = +x  !OK
-    !ERROR: No user-defined or intrinsic + operator matches operand type LOGICAL(4)
+    !ERROR: No intrinsic or user-defined OPERATOR(+) matches operand type LOGICAL(4)
     l = +l
     l = .not. r  !OK
-    !ERROR: No user-defined or intrinsic .NOT. operator matches operand type TYPE(t)
+    !ERROR: No intrinsic or user-defined OPERATOR(.NOT.) matches operand type TYPE(t)
     l = .not. x
   end
   subroutine test_concat()
     l = x // y  !OK
-    !ERROR: No user-defined or intrinsic // operator matches operand types TYPE(t) and REAL(4)
+    !ERROR: No intrinsic or user-defined OPERATOR(//) matches operand types TYPE(t) and REAL(4)
     l = x // r
   end
   subroutine test_conformability(x, y)
     real :: x(10), y(10,10)
     l = x + y  !OK
-    !ERROR: No user-defined or intrinsic + operator matches rank 2 array of REAL(4) and rank 1 array of REAL(4)
+    !ERROR: No intrinsic or user-defined OPERATOR(+) matches rank 2 array of REAL(4) and rank 1 array of REAL(4)
     l = y + x
   end
 end
@@ -141,8 +127,8 @@ end
 module m3
   interface operator(+)
     logical function add(x, y)
-      logical :: x
-      integer :: y
+      logical, intent(in) :: x
+      integer, value :: y
     end
   end interface
 contains
@@ -171,15 +157,15 @@ contains
   subroutine s1(x, y, z)
     logical :: x
     real :: y, z
-    !ERROR: Defined operator '.a.' not found
+    !ERROR: No operator .A. defined for REAL(4) and REAL(4)
     x = y .a. z
-    !ERROR: Defined operator '.o.' not found
+    !ERROR: No operator .O. defined for REAL(4) and REAL(4)
     x = y .o. z
-    !ERROR: Defined operator '.n.' not found
+    !ERROR: No operator .N. defined for REAL(4)
     x = .n. y
-    !ERROR: Defined operator '.xor.' not found
+    !ERROR: No operator .XOR. defined for REAL(4) and REAL(4)
     x = y .xor. z
-    !ERROR: Defined operator '.x.' not found
+    !ERROR: No operator .X. defined for REAL(4)
     x = .x. y
   end
 end
@@ -201,9 +187,50 @@ contains
   subroutine s1(x, y, z)
     logical :: x
     complex :: y, z
-    !ERROR: No user-defined or intrinsic .AND. operator matches operand types COMPLEX(4) and COMPLEX(4)
+    !ERROR: No intrinsic or user-defined OPERATOR(.AND.) matches operand types COMPLEX(4) and COMPLEX(4)
     x = y .and. z
-    !ERROR: No specific procedure of generic operator '.a.' matches the actual arguments
+    !ERROR: No intrinsic or user-defined .A. matches operand types COMPLEX(4) and COMPLEX(4)
     x = y .a. z
+  end
+end
+
+! Type-bound operators
+module m6
+  type :: t1
+  contains
+    procedure, pass(x) :: p1 => f1
+    generic :: operator(+) => p1
+  end type
+  type, extends(t1) :: t2
+  contains
+    procedure, pass(y) :: p2 => f2
+    generic :: operator(+) => p2
+  end type
+  type :: t3
+  contains
+    procedure, nopass :: p1 => f1
+    !ERROR: OPERATOR(+) procedure 'p1' may not have NOPASS attribute
+    generic :: operator(+) => p1
+  end type
+contains
+  integer function f1(x, y)
+    class(t1), intent(in) :: x
+    integer, intent(in) :: y
+  end
+  integer function f2(x, y)
+    class(t1), intent(in) :: x
+    class(t2), intent(in) :: y
+  end
+  subroutine test(x, y, z)
+    class(t1) :: x
+    class(t2) :: y
+    integer :: i
+    i = x + y
+    i = x + i
+    i = y + i
+    !ERROR: No intrinsic or user-defined OPERATOR(+) matches operand types TYPE(t2) and TYPE(t1)
+    i = y + x
+    !ERROR: No intrinsic or user-defined OPERATOR(+) matches operand types INTEGER(4) and TYPE(t1)
+    i = i + x
   end
 end
