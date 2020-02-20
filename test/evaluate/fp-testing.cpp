@@ -2,6 +2,9 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#if __x86_64__ && defined(_MSC_VER)
+#include <xmmintrin.h>
+#endif
 
 using Fortran::common::RoundingMode;
 using Fortran::evaluate::RealFlag;
@@ -23,6 +26,17 @@ ScopedHostFloatingPointEnvironment::ScopedHostFloatingPointEnvironment(
     std::abort();
   }
 #if __x86_64__
+#ifdef _MSC_VER
+  int new_mxcsr = _mm_getcsr();
+  if (context.flushSubnormalsToZero()) {
+    new_mxcsr |= 0x8000;
+    new_mxcsr |= 0x0040;
+  } else {
+    new_mxcsr &= 0x8000;
+    new_mxcsr &= 0x0040;
+  }
+  _mm_setcsr(new_mxcsr);
+#else
   if (treatSubnormalOperandsAsZero) {
     currentFenv_.__mxcsr |= 0x0040;
   } else {
@@ -33,6 +47,7 @@ ScopedHostFloatingPointEnvironment::ScopedHostFloatingPointEnvironment(
   } else {
     currentFenv_.__mxcsr &= ~0x8000;
   }
+#endif
 #else
   // TODO others
 #endif
