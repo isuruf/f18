@@ -13,7 +13,9 @@
 #include <cstring>
 #include <fcntl.h>
 #include <stdlib.h>
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 
 namespace Fortran::runtime::io {
 
