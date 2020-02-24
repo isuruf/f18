@@ -62,10 +62,10 @@ jobs:
   - powershell: Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
     displayName: Add conda to PATH
 
-  - script: |
-      conda config --add channels conda-forge
-      conda create --yes --quiet --name deps clangdev=9.0.0 lld cmake ninja
-    displayName: Install clang and lld
+    #- script: |
+    #  conda config --add channels conda-forge
+    #  conda create --yes --quiet --name deps clangdev=9.0.0 lld cmake ninja
+    #displayName: Install clang and lld
 
   - script: |
       call activate deps
