@@ -69,13 +69,13 @@ jobs:
 
   - script: |
       call activate deps
-      mkdir build
-      cd build
       set CC=clang
       set CXX=clang++
       call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" amd64
       cl.exe check_fp.c
       a.exe
+      mkdir build
+      cd build
       cmake -G"Ninja" .. -DCMAKE_PREFIX_PATH=%CONDA_PREFIX%/Library
       ninja -j1 -k 0
       #ctest --output-on-failure -j2
