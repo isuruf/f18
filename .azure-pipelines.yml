@@ -73,7 +73,7 @@ jobs:
       set CXX=clang++
       call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" amd64
       cl.exe check_fp.c
-      a.exe
+      check_fp.exe
       mkdir build
       cd build
       cmake -G"Ninja" .. -DCMAKE_PREFIX_PATH=%CONDA_PREFIX%/Library
